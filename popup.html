@@ -1,19 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History Insights Chatbot</title>
-  <script src="popup.js" defer></script>
-  <link rel="stylesheet" href="styles.css">
+    <title>History Insights</title>
+    <style>
+        body {
+            width: 400px;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        input {
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        .error {
+            color: red;
+            padding: 8px;
+            background-color: #fff3f3;
+            border-radius: 4px;
+        }
+        .timeline-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .timeline-control select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .results-section {
+            margin-bottom: 20px;
+        }
+        .results-section h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .links-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .links-list li {
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .links-list a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .links-list a:hover {
+            text-decoration: underline;
+        }
+        .summary {
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
-  <div id="chat-container">
-    <div id="history-insight">
-      <textarea id="user-query" placeholder="Ask about your browsing history..."></textarea>
-      <button id="ask-btn">Ask</button>
+    <div class="input-group">
+        <label for="apiKey">Gemini API Key:</label>
+        <input type="password" id="apiKey" placeholder="Enter your API key">
+        <button id="saveApiKey">Save API Key</button>
     </div>
-    <div id="response-container"></div>
-  </div>
+
+    <div class="timeline-control">
+        <label for="timeRange">Search History:</label>
+        <select id="timeRange">
+            <option value="1">Last 24 hours</option>
+            <option value="7">Last 7 days</option>
+            <option value="14">Last 2 weeks</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 3 months</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="queryInput">Search Query:</label>
+        <input type="text" id="queryInput" placeholder="What would you like to find?">
+        <button id="searchButton">Search History</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script type="module" src="popup.js"></script>
 </body>
 </html>

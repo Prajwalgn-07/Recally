@@ -1,36 +1,43 @@
-require('dotenv').config();
+// require('dotenv').config();
+import historyService from './services/historyService.js';
+import aiService from './services/aiService.js';
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "query_history") {
-        const historyItems = await chrome.history.search({ text: "", maxResults: 100 });
-
-        // Extract relevant history entries
-        const data = historyItems.map(item => ({ url: item.url, title: item.title, lastVisit: item.lastVisitTime }));
-
-        // Prepare prompt for LLM
-        const prompt = `User Query: ${message.query}\nBrowser History: ${JSON.stringify(data)}\nSummarize and provide insights.`;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }]
-                })
+        handleHistoryQuery(message.query, message.timeRange)
+            .then(response => {
+                const content = historyService.extractContent(response);
+                console.log('Sending response back to popup:', content);
+                sendResponse({ success: true, data: content });
+            })
+            .catch(error => {
+                console.error('Error in background:', error);
+                sendResponse({ success: false, error: error.message });
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            sendResponse(result);
-        } catch (error) {
-            console.error('Fetch error:', error);
-            sendResponse({ error: error.message });
-        }
+        return true;
     }
-    return true;
 });
+
+async function handleHistoryQuery(query, daysAgo) {
+    try {
+        console.group('History Query Debug');
+        console.log('Query:', query);
+        console.log('Time Range:', daysAgo, 'days');
+        
+        const historyData = await historyService.fetchHistory(100, daysAgo);
+        console.log('History Data:', historyData);
+        
+        const prompt = historyService.formatHistoryForPrompt(historyData, query);
+        console.log('Formatted Prompt:', prompt);
+        
+        const insights = await aiService.getInsights(prompt);
+        console.log('AI Insights:', insights);
+        console.groupEnd();
+        
+        return insights;
+    } catch (error) {
+        console.error('Error in history query handler:', error);
+        console.groupEnd();
+        throw error;
+    }
+}
