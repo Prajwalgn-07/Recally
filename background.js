@@ -4,7 +4,7 @@ import aiService from './services/aiService.js';
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "query_history") {
-        handleHistoryQuery(message.query, message.timeRange)
+        handleHistoryQuery(message.query, message.timeRange, message.resultCount)
             .then(response => {
                 const content = historyService.extractContent(response);
                 console.log('Sending response back to popup:', content);
@@ -18,13 +18,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-async function handleHistoryQuery(query, daysAgo) {
+async function handleHistoryQuery(query, daysAgo, resultCount) {
     try {
         console.group('History Query Debug');
         console.log('Query:', query);
         console.log('Time Range:', daysAgo, 'days');
+        console.log('Result Count:', resultCount);
         
-        const historyData = await historyService.fetchHistory(100, daysAgo);
+        const historyData = await historyService.fetchHistory(
+            resultCount,
+            daysAgo
+        );
         console.log('History Data:', historyData);
         
         const prompt = historyService.formatHistoryForPrompt(historyData, query);

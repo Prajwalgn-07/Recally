@@ -112,7 +112,7 @@
         <input type="password" id="apiKey" placeholder="Enter your API key">
         <button id="saveApiKey">Save API Key</button>
     </div>
-
+    
     <div class="timeline-control">
         <label for="timeRange">Search History:</label>
         <select id="timeRange">
@@ -121,6 +121,20 @@
             <option value="14">Last 2 weeks</option>
             <option value="30" selected>Last 30 days</option>
             <option value="90">Last 3 months</option>
+            <option value="180">Last 6 months</option>
+            <option value="365">Last 1 year</option>
+        </select>
+    </div>
+    
+    <div class="input-group">
+        <label for="resultCount">Results Count:</label>
+        <select id="resultCount">
+            <option value="50">Quick Search (50 results)</option>
+            <option value="100" selected>Standard Search (100 results)</option>
+            <option value="200">Deep Search (200 results)</option>
+            <option value="500">Comprehensive Search (500 results)</option>
+            <option value="1000">Extensive Search (1000 results)</option>
+            <option value="2000">Intensive Search (2000 results)</option>
         </select>
     </div>
 

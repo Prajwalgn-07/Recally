@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 chrome.runtime.sendMessage({
                     type: "query_history",
                     query: query,
-                    timeRange: parseInt(timeRange.value)
+                    timeRange: parseInt(timeRange.value),
+                    resultCount: parseInt(document.getElementById('resultCount').value)
                 }, response => {
                     console.log('Received response:', response);
                     

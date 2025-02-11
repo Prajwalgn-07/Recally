@@ -1,14 +1,14 @@
-import { CONFIG } from '../config/constants.js';  // Add .js extension
+import { CONFIG } from '../config/constants.js';
 
 class HistoryService {
-    async fetchHistory(maxResults = 100, daysAgo = 30) {
+    async fetchHistory(maxResults, daysAgo) {
         try {
             const startTime = new Date();
             startTime.setDate(startTime.getDate() - daysAgo);
 
             const historyItems = await chrome.history.search({ 
                 text: "", 
-                maxResults,
+                maxResults: maxResults || CONFIG.HISTORY.DEFAULT_MAX_RESULTS, // Fallback if not provided
                 startTime: startTime.getTime()
             });
             
@@ -74,4 +74,4 @@ Keep the response clear and concise, focusing only on information related to the
     }
 }
 
-export default new HistoryService(); 
+export default new HistoryService();
