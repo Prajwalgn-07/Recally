@@ -26,12 +26,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 await tokenService.setApiKey(apiKey);
                 console.log('API Key saved:', await tokenService.getApiKey());
-                alert('API key saved successfully!');
+    
+                let messageDiv = document.createElement("div");
+                messageDiv.textContent = "API key saved successfully!";
+                messageDiv.style.color = "green";
+                messageDiv.style.padding = "8px";
+                messageDiv.style.backgroundColor = "#e6ffe6"; 
+                messageDiv.style.borderRadius = "4px";
+                messageDiv.style.textAlign = "center";
+                messageDiv.style.marginTop = "8px";
+    
+                apiKeyInput.parentNode.appendChild(messageDiv);
+    
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 2000);
+    
             } catch (error) {
                 alert('Error saving API key: ' + error.message);
             }
         }
-    });
+    });    
 
     function formatLinks(linksText) {
         // Extract URLs and titles using regex

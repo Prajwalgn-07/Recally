@@ -73,7 +73,6 @@ GEMINI_API_KEY=your_api_key_here
 5. View the results:
    - Summary of findings
    - List of relevant links
-   - When you visited each page
 
 ### Example Queries
 - "Find that JavaScript tutorial about promises"
