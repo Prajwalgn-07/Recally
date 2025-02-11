@@ -20,6 +20,25 @@ class TokenService {
         }
     }
 
+    async getModel() {
+        try {
+            const result = await chrome.storage.sync.get([CONFIG.STORAGE.MODEL]);
+            return result[CONFIG.STORAGE.MODEL];
+        } catch (error) {
+            console.error('Error fetching model:', error);
+            throw error;
+        }
+    }
+
+    async setModel(model) {
+        try {
+            await chrome.storage.sync.set({ [CONFIG.STORAGE.MODEL]: model });
+        } catch (error) {
+            console.error('Error saving model:', error);
+            throw error;
+        }
+    }
+
     async removeApiKey() {
         try {
             await chrome.storage.sync.remove([CONFIG.STORAGE.API_KEY]);
@@ -30,4 +49,4 @@ class TokenService {
     }
 }
 
-export default new TokenService(); 
+export default new TokenService();

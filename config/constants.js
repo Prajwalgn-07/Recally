@@ -3,10 +3,10 @@ export const CONFIG = {
         DEFAULT_MAX_RESULTS: 100
     },
     AI: {
-        MODEL: 'gemini-1.5-flash',
-        BASE_URL: 'https://generativelanguage.googleapis.com/v1beta',
+        BASE_URL: 'https://generativelanguage.googleapis.com/v1',
     },
     STORAGE: {
-        API_KEY: 'gemini_api_key'
+        API_KEY: 'gemini_api_key',
+        MODEL: 'gemini_model'
     }
-}; 
+};

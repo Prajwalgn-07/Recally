@@ -7,28 +7,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchButton = document.getElementById('searchButton');
     const timeRange = document.getElementById('timeRange');
     const resultsDiv = document.getElementById('results');
+    const modelSelect = document.getElementById('modelSelect');
 
-    // Load existing API key if any
     try {
         const apiKey = await tokenService.getApiKey();
         if (apiKey) {
             apiKeyInput.value = apiKey;
             console.log('Loaded API key successfully');
         }
+
+        const model = await tokenService.getModel();
+        if (model) {
+            modelSelect.value = model;
+            console.log('Loaded model successfully');
+        }
     } catch (error) {
-        console.error('Error loading API key:', error);
+        console.error('Error loading API key or model:', error);
     }
 
     // Save API key
     saveButton.addEventListener('click', async () => {
         const apiKey = apiKeyInput.value.trim();
+        const model = modelSelect.value;
         if (apiKey) {
             try {
                 await tokenService.setApiKey(apiKey);
-                console.log('API Key saved:', await tokenService.getApiKey());
+                await tokenService.setModel(model);
+                console.log('API Key and model saved:', await tokenService.getApiKey(), await tokenService.getModel());
     
                 let messageDiv = document.createElement("div");
-                messageDiv.textContent = "API key saved successfully!";
+                messageDiv.textContent = "API key and model saved successfully!";
                 messageDiv.style.color = "green";
                 messageDiv.style.padding = "8px";
                 messageDiv.style.backgroundColor = "#e6ffe6"; 
@@ -36,14 +44,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 messageDiv.style.textAlign = "center";
                 messageDiv.style.marginTop = "8px";
     
-                apiKeyInput.parentNode.appendChild(messageDiv);
+                const timelineControl = document.querySelector('.timeline-control');
+                timelineControl.parentNode.insertBefore(messageDiv, timelineControl);
     
                 setTimeout(() => {
                     messageDiv.remove();
                 }, 2000);
     
             } catch (error) {
-                alert('Error saving API key: ' + error.message);
+                alert('Error saving API key or model: ' + error.message);
             }
         }
     });    

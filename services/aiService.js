@@ -4,21 +4,24 @@ import tokenService from './tokenService.js';
 class AiService {
     constructor() {
         this.baseUrl = CONFIG.AI.BASE_URL;
-        this.model = CONFIG.AI.MODEL;
     }
 
     async getInsights(prompt) {
         try {
-            debugger; // This will pause execution when DevTools is open
+            debugger;
             const apiKey = await tokenService.getApiKey();
+            const model = await tokenService.getModel();
             
             if (!apiKey) {
                 throw new Error('API key not found. Please set up your API key first.');
             }
 
-            const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${apiKey}`;
-            
-            debugger; // Will pause before making the API call
+            if (!model) {
+                throw new Error('Model not found. Please select a model first.');
+            }
+
+            const url = `${this.baseUrl}/models/${model}:generateContent?key=${apiKey}`;
+            debugger;
             console.log('Request URL:', url);
             console.log('Request Body:', prompt);
 
@@ -30,7 +33,7 @@ class AiService {
                 body: JSON.stringify(prompt)
             });
 
-            debugger; // Will pause after getting the response
+            debugger;
             if (!response.ok) {
                 const errorData = await response.text();
                 console.error('API Response:', errorData);
@@ -41,11 +44,11 @@ class AiService {
             console.log('API Success Response:', result);
             return result;
         } catch (error) {
-            debugger; // Will pause if there's an error
+            debugger;
             console.error('AI Service error:', error);
             throw error;
         }
     }
 }
 
-export default new AiService(); 
+export default new AiService();
