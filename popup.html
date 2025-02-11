@@ -7,26 +7,37 @@
             width: 400px;
             padding: 16px;
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9; 
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #4285f4;
         }
         .input-group {
             margin-bottom: 16px;
         }
-        input {
+        input, select {
             width: 100%;
             margin-bottom: 8px;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 14px;
         }
         button {
-            width: 75%;
-            padding: 8px;
+            width: 100%;
+            padding: 10px;
             background-color: #4285f4;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 8px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #3367d6;
@@ -45,9 +56,10 @@
         }
         .timeline-control select {
             flex: 1;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 14px;
         }
         #results {
             margin-top: 20px;
@@ -109,15 +121,10 @@
         label {
             font-size: 14px;
         }
-        .timeline-control select, #modelSelect, #resultCount {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
     </style>
 </head>
 <body>
+    <div class="header">Recally</div>
     <div class="input-group">
         <label for="apiKey">Gemini API Key:</label>
         <input type="password" id="apiKey" placeholder="Enter your API key">
@@ -127,7 +134,7 @@
         <select id="modelSelect">
             <option value="gemini-1.5-flash" selected>Gemini-1.5-flash</option>
             <option value="gemini-1.5-flash-8b">Gemini-1.5-flash-8b</option>
-            <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+            <option value="gemini-1.5-pro">Gemini-1.5-pro</option>
             <option value="gemini-2.0-flash">Gemini-2.0-flash</option>
         </select>
         <button id="saveApiKey">Save API Key and Model Information</button>
