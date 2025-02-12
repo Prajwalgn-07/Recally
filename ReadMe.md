@@ -20,6 +20,17 @@ Recally is a Chrome extension that uses AI to help you find and understand your 
   - Last 3 months
   - Last 6 months
   - Last 1 year
+  - Custom time range
+
+### History Results Count
+- Select the Search Depth:
+  - Quick Search(50 results)
+  - Standard Search(100 results)
+  - Deep Search(200 results)
+  - Comprehensive Search(500 results)
+  - Extensive Search(1000 results)
+  - Intensive Search(2000 results)
+  - Custom Result Count
 
 ### 📊 Organized Results
 - Clear summaries of your browsing activity
