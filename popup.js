@@ -5,33 +5,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     const saveButton = document.getElementById('saveApiKey');
     const queryInput = document.getElementById('queryInput');
     const searchButton = document.getElementById('searchButton');
-    const timeRange = document.getElementById('timeRange');
-    const resultsDiv = document.getElementById('results');
-    const modelSelect = document.getElementById('modelSelect');
+    const timeRangeSelect = document.getElementById('timeRange');
+    const customTimeRangeInput = document.getElementById('customTimeRange');
     const resultCountSelect = document.getElementById('resultCount');
     const customResultCountInput = document.getElementById('customResultCount');
-
+    const resultsDiv = document.getElementById('results');
+    const modelSelect = document.getElementById('modelSelect');
     customResultCountInput.style.display = 'none';
+    customTimeRangeInput.style.display = 'none';
 
     resultCountSelect.addEventListener('change', () => {
-        if (resultCountSelect.value === 'custom') {
-            customResultCountInput.style.display = 'block';
-        } else {
-            customResultCountInput.style.display = 'none';
-        }
+        customResultCountInput.style.display = resultCountSelect.value === 'custom' ? 'block' : 'none';
+    });
+    
+    timeRangeSelect.addEventListener('change', () => {
+        customTimeRangeInput.style.display = timeRangeSelect.value === 'custom' ? 'block' : 'none';
     });
 
     try {
         const apiKey = await tokenService.getApiKey();
         if (apiKey) {
             apiKeyInput.value = apiKey;
-            console.log('Loaded API key successfully');
         }
 
         const model = await tokenService.getModel();
         if (model) {
             modelSelect.value = model;
-            console.log('Loaded model successfully');
         }
     } catch (error) {
         console.error('Error loading API key or model:', error);
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 await tokenService.setApiKey(apiKey);
                 await tokenService.setModel(model);
-                console.log('API Key and model saved:', await tokenService.getApiKey(), await tokenService.getModel());
             } catch (error) {
                 alert('Error saving API key or model: ' + error.message);
             }
@@ -54,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchButton.addEventListener('click', async () => {
         const query = queryInput.value.trim();
         let resultCount = parseInt(resultCountSelect.value);
+        let timeRange = parseInt(timeRangeSelect.value);
 
         if (resultCountSelect.value === 'custom') {
             const customValue = parseInt(customResultCountInput.value);
@@ -65,6 +64,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        if (timeRangeSelect.value === 'custom') {
+            const customTimeValue = parseInt(customTimeRangeInput.value);
+            if (!isNaN(customTimeValue) && customTimeValue > 0) {
+                timeRange = customTimeValue;
+            } else {
+                alert('Please enter a valid custom time range.');
+                return;
+            }
+        }
+
         if (query) {
             try {
                 resultsDiv.innerHTML = 'Loading...';
@@ -72,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 chrome.runtime.sendMessage({
                     type: "query_history",
                     query: query,
-                    timeRange: parseInt(timeRange.value),
+                    timeRange: timeRange,
                     resultCount: resultCount
                 }, response => {
                     if (chrome.runtime.lastError) {
