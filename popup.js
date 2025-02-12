@@ -43,6 +43,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 await tokenService.setApiKey(apiKey);
                 await tokenService.setModel(model);
+                console.log('API Key and model saved:', await tokenService.getApiKey(), await tokenService.getModel());
+    
+                let messageDiv = document.createElement("div");
+                messageDiv.textContent = "API key and model saved successfully!";
+                messageDiv.style.color = "green";
+                messageDiv.style.padding = "8px";
+                messageDiv.style.backgroundColor = "#e6ffe6"; 
+                messageDiv.style.borderRadius = "4px";
+                messageDiv.style.textAlign = "center";
+                messageDiv.style.marginTop = "8px";
+    
+                const timelineControl = document.querySelector('.timeline-control');
+                timelineControl.parentNode.insertBefore(messageDiv, timelineControl);
+    
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 2000);
+    
             } catch (error) {
                 alert('Error saving API key or model: ' + error.message);
             }
