@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const timeRange = document.getElementById('timeRange');
     const resultsDiv = document.getElementById('results');
     const modelSelect = document.getElementById('modelSelect');
+    const resultCountSelect = document.getElementById('resultCount');
+    const customResultCountInput = document.getElementById('customResultCount');
+
+    customResultCountInput.style.display = 'none';
+
+    resultCountSelect.addEventListener('change', () => {
+        if (resultCountSelect.value === 'custom') {
+            customResultCountInput.style.display = 'block';
+        } else {
+            customResultCountInput.style.display = 'none';
+        }
+    });
 
     try {
         const apiKey = await tokenService.getApiKey();
@@ -25,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading API key or model:', error);
     }
 
-    // Save API key
     saveButton.addEventListener('click', async () => {
         const apiKey = apiKeyInput.value.trim();
         const model = modelSelect.value;
@@ -34,76 +45,49 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await tokenService.setApiKey(apiKey);
                 await tokenService.setModel(model);
                 console.log('API Key and model saved:', await tokenService.getApiKey(), await tokenService.getModel());
-    
-                let messageDiv = document.createElement("div");
-                messageDiv.textContent = "API key and model saved successfully!";
-                messageDiv.style.color = "green";
-                messageDiv.style.padding = "8px";
-                messageDiv.style.backgroundColor = "#e6ffe6"; 
-                messageDiv.style.borderRadius = "4px";
-                messageDiv.style.textAlign = "center";
-                messageDiv.style.marginTop = "8px";
-    
-                const timelineControl = document.querySelector('.timeline-control');
-                timelineControl.parentNode.insertBefore(messageDiv, timelineControl);
-    
-                setTimeout(() => {
-                    messageDiv.remove();
-                }, 2000);
-    
             } catch (error) {
                 alert('Error saving API key or model: ' + error.message);
             }
         }
-    });    
+    });
 
-    function formatLinks(linksText) {
-        // Extract URLs and titles using regex
-        const linkMatches = linksText.match(/- .*?: https?:\/\/[^\s]+/g) || [];
-        
-        return linkMatches.map(link => {
-            const [title, url] = link.replace('- ', '').split(': ');
-            return `<li><a href="${url}" target="_blank" title="${title}">${title}</a></li>`;
-        }).join('');
-    }
-
-    // Handle search with detailed error logging
     searchButton.addEventListener('click', async () => {
         const query = queryInput.value.trim();
+        let resultCount = parseInt(resultCountSelect.value);
+
+        if (resultCountSelect.value === 'custom') {
+            const customValue = parseInt(customResultCountInput.value);
+            if (!isNaN(customValue) && customValue > 0) {
+                resultCount = customValue;
+            } else {
+                alert('Please enter a valid custom result count.');
+                return;
+            }
+        }
+
         if (query) {
             try {
-                console.group('Search Query Debug');
-                console.log('Search Query:', query);
-                console.log('Time Range:', timeRange.value, 'days');
                 resultsDiv.innerHTML = 'Loading...';
 
                 chrome.runtime.sendMessage({
                     type: "query_history",
                     query: query,
                     timeRange: parseInt(timeRange.value),
-                    resultCount: parseInt(document.getElementById('resultCount').value)
+                    resultCount: resultCount
                 }, response => {
-                    console.log('Received response:', response);
-                    
                     if (chrome.runtime.lastError) {
-                        console.error('Runtime error:', chrome.runtime.lastError);
                         resultsDiv.innerHTML = `<p class="error">Error: ${chrome.runtime.lastError.message}</p>`;
                         return;
                     }
 
                     if (!response) {
-                        console.error('No response received');
                         resultsDiv.innerHTML = '<p class="error">Error: No response received</p>';
                         return;
                     }
 
                     if (response.error) {
-                        console.error('Error in response:', response.error);
                         resultsDiv.innerHTML = `<p class="error">Error: ${response.error}</p>`;
                     } else if (response.data) {
-                        console.log('Success response:', response.data);
-                        
-                        // Format the response sections
                         resultsDiv.innerHTML = `
                             <div class="results-section">
                                 <h3>Summary</h3>
@@ -117,17 +101,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         `;
                     } else {
-                        console.error('Invalid response format:', response);
                         resultsDiv.innerHTML = '<p class="error">Error: Invalid response format</p>';
                     }
                 });
-                
-                console.groupEnd();
             } catch (error) {
-                console.error('Search error:', error);
                 resultsDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
-                console.groupEnd();
             }
         }
     });
+
+    function formatLinks(linksText) {
+        const linkMatches = linksText.match(/- .*?: https?:\/\/[^\s]+/g) || [];
+        return linkMatches.map(link => {
+            const [title, url] = link.replace('- ', '').split(': ');
+            return `<li><a href="${url}" target="_blank" title="${title}">${title}</a></li>`;
+        }).join('');
+    }
 });
